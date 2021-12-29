@@ -12,9 +12,11 @@ import java.util.List;
 public class LombokConverter {
 
 
+    private static final Gson GSON = new Gson();
+
     public static <T> T convertLombokToStringToObject(String lombokString, Class<T> klass) {
         // gson is very flexible
-        return (new Gson()).fromJson(convertLombokStringToJson(lombokString, klass), klass);
+        return GSON.fromJson(convertLombokStringToJson(lombokString, klass), klass);
 
     }
 
