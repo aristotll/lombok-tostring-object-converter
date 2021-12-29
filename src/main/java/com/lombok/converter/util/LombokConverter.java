@@ -2,37 +2,37 @@ package com.lombok.converter.util;
 
 import com.google.gson.Gson;
 import com.lombok.converter.JSONCharacters;
-import com.lombok.converter.model.Person;
+import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class LombokConverter {
 
-    private LombokConverter(){}
 
-    public static Person convertLombokToStringToPersonObject(String lombokString) {
-        String personJson = convertLombokStringToJson(lombokString);
-
-        return (new Gson()).fromJson(personJson, Person.class);
+    public static <T> T convertLombokToStringToObject(String lombokString, Class<T> klass) {
+        // gson is very flexible
+        return (new Gson()).fromJson(convertLombokStringToJson(lombokString, klass), klass);
 
     }
-    private static String convertLombokStringToJson(String lombokString) {
+
+    private static <T> String convertLombokStringToJson(String lombokString, Class<T> klass) {
         String jsonFormatted = lombokString;
 
-        List<Class<?>> classList= new ArrayList<>();
+        List<Class<?>> classList = new ArrayList<>();
 
-        getClassNamesRecursively(Person.class, classList);
+        getClassNamesRecursively(klass, classList);
 
-        for(Class<?> classElement : classList) {
-            String className  = classElement.getSimpleName();
+        for (Class<?> classElement : classList) {
+            String className = classElement.getSimpleName();
             jsonFormatted = jsonFormatted.contains(className)
                     ? jsonFormatted.replaceAll(className, "")
                     : jsonFormatted;
         }
 
-        for(JSONCharacters character : JSONCharacters.values()) {
+        for (JSONCharacters character : JSONCharacters.values()) {
             char currentChar = character.getOldChar();
             char newChar = character.getNewChar();
             jsonFormatted = jsonFormatted.contains(String.valueOf(currentChar))
@@ -41,15 +41,14 @@ public class LombokConverter {
         }
 
 
-
         return jsonFormatted;
     }
 
     private static void getClassNamesRecursively(Class<?> rootClass, List<Class<?>> classList) {
-        if(rootClass != null) {
+        if (rootClass != null) {
             classList.add(rootClass);
             for (Field declaredField : rootClass.getDeclaredFields()) {
-                if(!declaredField.getType().isPrimitive()
+                if (!declaredField.getType().isPrimitive()
                         && !declaredField.getType().getPackageName().startsWith("java.")) {
                     getClassNamesRecursively(declaredField.getType(), classList);
                 }

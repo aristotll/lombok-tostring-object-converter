@@ -10,7 +10,7 @@ public class LombokConverterTest {
     @Test
     public void testConvertLombokToStringToPersonWithTelephoneObject() {
         String personString = "Person(name=John, age=30, telephone=Telephone(codeArea=16, number=1111-2222))";
-        Person person = LombokConverter.convertLombokToStringToPersonObject(personString);
+        Person person = LombokConverter.convertLombokToStringToObject(personString, Person.class);
 
         System.out.println("person object converted: " + person.toString());
         assertNotNull(person);
@@ -24,7 +24,7 @@ public class LombokConverterTest {
     @Test
     public void testConvertLombokToStringToPersonWithoutTelephoneObject() {
         String personString = "Person(name=John, age=30, telephone=null)";
-        Person person = LombokConverter.convertLombokToStringToPersonObject(personString);
+        Person person = LombokConverter.convertLombokToStringToObject(personString, Person.class);
 
         System.out.println("person object converted: " + person.toString());
         assertNotNull(person);
